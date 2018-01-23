@@ -9,19 +9,16 @@ let $modeButtons = document.querySelectorAll('.mode')
 // let $hardBtn = document.querySelector('#hardBtn')
 
 
-
-// initial state data
+// declare state data
 let colors = []
 let numSquares = 6
-let pickedColor
+let pickedColor = ''
 
 init()
 
 function init() {
   setupModeButtons()
-
   setupSquares()
-
   reset()
 }
 
@@ -35,7 +32,6 @@ function setupModeButtons() {
       this.classList.add('selected')
 
       if (this.textContent === "Easy") {
-        console.log('easy');
         numSquares = 3
       }
       else if (this.textContent === "Hard") {
@@ -52,7 +48,6 @@ function setupSquares() {
     // set click listeners
     square.addEventListener('click', function() {
       let clickedColor = this.style.background
-      console.log(clickedColor, pickedColor);
 
       // guessed right!
       if (clickedColor === pickedColor) {
@@ -76,13 +71,38 @@ function setupSquares() {
   })
 }
 
+function reset() {
+  // ====== GENERATE DATA ======
+  // generate all new colors
+  colors = generateRandomColors(numSquares)
+  // pick new correct "goal" color
+  pickedColor = pickColor()
+
+  // ====== UPDATE UI ======
+  // change h1 color display to match picked colors
+  $colorDisplay.textContent = pickedColor
+  // update squares state (colors)
+  $squares.forEach((square, i) => {
+    if (colors[i]) {
+      square.style.display = 'block'
+      square.style.background = colors[i]
+    }
+    else {
+      square.style.display = 'none'
+    }
+  })
+  // reset button text
+  $resetButton.textContent = 'New Colors'
+  // reset h1 color`
+  $h1.style.background = 'steelblue'
+  // reset message
+  $messageDisplay.textContent = ''
+}
 
 // ====== Reset (New Colors) Button ======
 $resetButton.addEventListener('click', function() {
   reset()
 })
-
-
 
 
 
@@ -130,34 +150,6 @@ function generateRandomColors(num) {
   return array
 }
 
-function reset() {
-  // ====== GENERATE DATA ======
-  // generate all new colors
-  colors = generateRandomColors(numSquares)
-  // pick new correct "goal" color
-  pickedColor = pickColor()
-
-
-  // ====== UPDATE UI ======
-  // change h1 color display to match picked colors
-  $colorDisplay.textContent = pickedColor
-  // update squares state (colors)
-  $squares.forEach((square, i) => {
-    if (colors[i]) {
-      square.style.display = 'block'
-      square.style.background = colors[i]
-    }
-    else {
-      square.style.display = 'none'
-    }
-  })
-  // reset button text
-  $resetButton.textContent = 'New Colors'
-  // reset h1 color`
-  $h1.style.background = 'steelblue'
-  // reset message
-  $messageDisplay.textContent = ''
-}
 
 
 /*
@@ -181,7 +173,7 @@ $easyBtn.addEventListener('click', function() {
   })
 })
 
-// ====== Hard Button ======
+// ====== Hard Button ======  old way (noy scalable, too much duplicate code)
 $hardBtn.addEventListener('click', function() {
   this.classList.add('selected')
   $easyBtn.classList.remove('selected')
